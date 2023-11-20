@@ -54,34 +54,39 @@ def play_game_auto():
         # get info about best play
         n_tree = n_tree.child[max_score_i]
         n_notation = n_tree.tictactoe.notation
-        game.play(player=n_notation[-1]["player"], pos=n_notation[-1]["pos"], is_notation=True)
+        game.play(player=n_notation[-1]["player"], pos=n_notation[-1]["pos"])
 
         game_state_print(game.state)
+        print(game.result)
 
         # is end?
         if not game.result == 0:
-            print("winner :", "ai" if game.result == 1 else "user")
+            print("winner :", ["ai", "user", "draw"][game.result-1])
             break
 
         # user turn
         user_pos = tuple(map(int, input().split()))
         game.play(user_pos)
+
+        game_state_print(game.state)
+        print(game.result)
+
+        # is end?
+        if not game.result == 0:
+            print("winner :", ["ai", "user", "draw"][game.result-1])
+            break
+
+        # find next tree about user input
         for i in range(len(n_tree.child)):
             if n_tree.child[i].tictactoe.notation[-1]["pos"] == user_pos:
                 n_tree = n_tree.child[i]
                 break
-
-        game_state_print(game.state)
-
-        # is end?
-        if not game.result == 0:
-            print("winner :", "ai" if game.result == 1 else "user")
-            break
         
 def play_game_auto_ai_turn():
     pass
 
 def game_state_print(state):
+    print('\n')
     for row in state:
         for num in row:
             print(["_", "O", "X"][num], end="\t")

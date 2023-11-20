@@ -75,6 +75,7 @@ class Tictactoe:
         # check draw
         if len(self.notation) == 9:
             self.result = 3
+            return self.result
         
         return self.result
 
