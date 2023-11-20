@@ -1,12 +1,16 @@
 class Tictactoe:
-    def __init__(self) -> None:
+    def __init__(self, notation=None) -> None:
+        if not notation == None:
+            self.set_notation(notation)
+            return None
+        
         self.turn = 1
         self.state = [[0, 0, 0],
                       [0, 0, 0],
                       [0, 0, 0]]
         self.notation = []
         self.result = 0 # winner
-        self.auto_check = True # automatically check() after play()
+        # self.auto_check = True # automatically check() after play()
 
     def play(self, pos: tuple, player=None, is_notation=False) -> None:
         # player setting
@@ -30,8 +34,7 @@ class Tictactoe:
         self.turn = 1 if player == 2 else 2
 
         # check game result
-        if self.auto_check:
-            self.check_end()
+        self.check_end()
 
     def check_end(self):
         # check horizontal
@@ -63,6 +66,11 @@ class Tictactoe:
             if self.state[0][2] == self.state[1][1] and self.state[0][2] == self.state[2][0]:
                 self.result = self.state[1][1]
                 return self.result
+        
+        # print("{")
+        # for _ in self.notation:
+        #     print(_, end=",\n")
+        # print("}")
             
         # check draw
         if len(self.notation) == 9:
@@ -75,19 +83,27 @@ class Tictactoe:
             raise Exception("That position is already occupied")
 
     def set_notation(self, notation):
+        self.turn = 1
         self.state = [[0, 0, 0],
                       [0, 0, 0],
                       [0, 0, 0]]
-        self.notation = notation
+        self.notation = list(notation)
         self.result = 0
 
-        print(len(notation))
         for n_notation in notation:
             self.play(n_notation["pos"], player=n_notation["player"], is_notation=True)
 
+    def available_pos(self) -> list:
+        result = []
+        for x in range(3):
+            for y in range(3):
+                if self.state[x][y] == 0:
+                    result.append((x, y))
+        return result
+
     def get_score(self, player=1):
-        SCORE_WIN = 30
-        SCORE_LOSE = -30
+        SCORE_WIN = 40
+        SCORE_LOSE = -40
         SCORE_DRAW = -10
         SCORE_EACH_TURN = -2
 
@@ -102,4 +118,4 @@ class Tictactoe:
 
         score += SCORE_EACH_TURN * len(self.notation)
 
-        return score
+        return float(score)
