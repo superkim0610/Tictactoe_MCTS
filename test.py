@@ -1,5 +1,7 @@
 from tictactoe import Tictactoe
 import sys
+import time
+import pickle
 
 class Tree:
     def __init__(self, tictactoe=Tictactoe(), depth=1):
@@ -34,7 +36,18 @@ class Tree:
 tree = None
 def make_tree():
     global tree
+    # load_tree()
     tree = Tree()
+    # save_tree(tree)
+
+def save_tree(tree, file_name="tree.pickle"):
+    with open(file_name, "wb") as f:
+        pickle.dump(tree, f)
+
+def load_tree(file_name="tree.pickle"):
+    global tree
+    with open(file_name, "rb") as f:
+        tree = pickle.load(f)
 
 def play_game_auto():
     game = Tictactoe()
@@ -81,6 +94,8 @@ def play_game_auto():
             if n_tree.child[i].tictactoe.notation[-1]["pos"] == user_pos:
                 n_tree = n_tree.child[i]
                 break
+            
+    # game finish
         
 def play_game_auto_ai_turn():
     pass
