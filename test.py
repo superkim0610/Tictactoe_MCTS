@@ -33,6 +33,30 @@ class Tree:
             tictactoe.play(pos)
             self.child.append(Tree(tictactoe, depth=self.depth+1))
 
+    def best_child(self, is_ai_first):
+        best_child = None
+        
+        # find best child
+        if is_ai_first:
+            max_score = -9999
+            max_score_i = None
+            for i in range(len(self.child)):
+                if self.child[i].score > max_score:
+                    max_score = self.child[i].score
+                    max_score_i = i
+            best_child = self.child[max_score_i]
+        else:
+            min_score = 9999
+            min_score_i = None
+            for i in range(len(self.child)):
+                if self.child[i].score < min_score:
+                    min_score = self.child[i].score
+                    min_score_i = i
+            best_child = self.child[min_score_i]
+
+        # get info about best play
+        return best_child
+
 tree = None
 def make_tree():
     global tree
@@ -56,16 +80,9 @@ def play_game_auto():
     while True:
         # ai turn
         # find best play
-        max_score = -9999
-        max_score_i = None
-        for i in range(len(n_tree.child)):
-            print(n_tree.child[i].score)
-            if n_tree.child[i].score > max_score:
-                max_score = n_tree.child[i].score
-                max_score_i = i
+        n_tree = n_tree.best_child(is_ai_first=True)
 
         # get info about best play
-        n_tree = n_tree.child[max_score_i]
         n_notation = n_tree.tictactoe.notation
         game.play(player=n_notation[-1]["player"], pos=n_notation[-1]["pos"])
 
@@ -98,7 +115,43 @@ def play_game_auto():
     # game finish
         
 def play_game_auto_ai_turn():
-    pass
+    game = Tictactoe()
+    n_tree = tree
+
+    while True:
+        # user turn
+        user_pos = tuple(map(int, input().split()))
+        game.play(user_pos)
+
+        game_state_print(game.state)
+        print(game.result)
+
+        # is end?
+        if not game.result == 0:
+            print("winner :", ["ai", "user", "draw"][game.result-1])
+            break
+
+        # find next tree about user input
+        for i in range(len(n_tree.child)):
+            if n_tree.child[i].tictactoe.notation[-1]["pos"] == user_pos:
+                n_tree = n_tree.child[i]
+                break
+            
+        # ai turn
+        # find best play
+        n_tree = n_tree.best_child(is_ai_first=False)
+
+        # get info about best play
+        n_notation = n_tree.tictactoe.notation
+        game.play(player=n_notation[-1]["player"], pos=n_notation[-1]["pos"])
+
+        game_state_print(game.state)
+        print(game.result)
+
+        # is end?
+        if not game.result == 0:
+            print("winner :", ["ai", "user", "draw"][game.result-1])
+            break
 
 def game_state_print(state):
     print('\n')
@@ -141,7 +194,9 @@ def test():
     t.set_notation(notation)
     print(t.result)
 
-make_tree()
-play_game_auto()
+# make_tree()
+load_tree()
+# play_game_auto()
+play_game_auto_ai_turn()
 # play_game_manual()
 # test()
